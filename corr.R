@@ -9,17 +9,14 @@ corr <- function(directory, threshold = 0) {
   
   ## Return a numeric vector of correlations
   
-  corr <- numeric(0)
-  
-  for (i in 1:332) {
-    data <- na.omit(read.csv(paste(directory, '/', sprintf("%03d", i), ".csv", sep="")))
-    
-    if (nrow(data) >= threshold) {
-      cr <- cor(data["sulfate"], data["nitrate"])
-      
-      if (!is.na(cr)) {
-        corr <- append(corr, cr)
-      }
+  total<-numeric()
+  for(file in list.files(directory)){
+    pollutantData<-read.table(paste(directory,"/",file,sep=""),sep=",",header=TRUE)
+    comple<-nrow(pollutantData[complete.cases(pollutantData),])
+    if(comple>threshold){
+      #total<-rbind(total,cor(pollutantData$nitrate,pollutantData$sulfate,use="complete.obs"))
+      total<-c(total,cor(pollutantData$nitrate,pollutantData$sulfate,use="complete.obs"))
     }
   }
-  
+  as.numeric(total)
+}
